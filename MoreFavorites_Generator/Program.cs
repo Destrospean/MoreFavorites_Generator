@@ -1,4 +1,6 @@
-﻿using System.Security.Cryptography;
+﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Xml;
 using Mono.Cecil;
 using SkiaSharp;
@@ -73,10 +75,32 @@ namespace Destrospean.MoreFavorites.Generator
                 xmlDocument.Load(args[0]);
             }
 
-            Console.Write("Specify a unique suffix for the batch of favorites entries (leave blank for a random number suffix): ");
-
             // Get a unique name for the assembly and _XML resource
-            var identifier = Console.ReadLine();
+            const string prompt = "Specify a unique suffix for the batch of favorites entries (leave blank for a random number suffix): ";
+            string? identifier = null;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && Console.IsOutputRedirected)
+            {
+                var startInfo = new ProcessStartInfo
+                    {
+                        Arguments = "--entry --text=\"" + prompt.Trim() + "\"",
+                        CreateNoWindow = true,
+                        FileName = "zenity",
+                        RedirectStandardOutput = true,
+                        UseShellExecute = false
+                    };
+                using var process = Process.Start(startInfo);
+                if (process != null)
+                {
+                    identifier = process.StandardOutput.ReadLine();
+                    process.WaitForExit();
+                }
+            }
+            else
+            {
+                Console.Write(prompt);
+                identifier = Console.ReadLine();
+            }
+
             var assemblyName = "MoreFavorites_" + (string.IsNullOrEmpty(identifier) ? FNV32.GetHash(Guid.NewGuid().ToString()).ToString() : identifier);
 
             // Get the assembly
