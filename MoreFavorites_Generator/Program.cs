@@ -106,7 +106,7 @@ namespace Destrospean.MoreFavorites.Generator
                 {
                     favoriteMusicElements.Add((XmlElement)node);
                 }
-                if (node.Name is "Unfavorite" or "Unfavourite" && !unfavoriteElements.Exists(x => node.Attributes?["Name"]?.Value == x.GetAttribute("Name") && (((XmlElement)node).GetAttribute("Favorite_Type") ?? ((XmlElement)node).GetAttribute("Favourite_Type")) == (x.GetAttribute("Favorite_Type") ?? x.GetAttribute("Favourite_Type"))))
+                if (node.Name is "Unfavorite" or "Unfavourite" && !unfavoriteElements.Exists(x => node.Attributes?["Name"]?.Value == x.GetAttribute("Name") && ((string?)((XmlElement)node).GetAttribute("Favorite_Type") ?? ((XmlElement)node).GetAttribute("Favourite_Type")) == ((string?)x.GetAttribute("Favorite_Type") ?? x.GetAttribute("Favourite_Type"))))
                 {
                     unfavoriteElements.Add((XmlElement)node);
                 }
@@ -158,9 +158,9 @@ namespace Destrospean.MoreFavorites.Generator
                 foreach (var favoriteColorElement in favoriteColorElements)
                 {
                     var colorName = favoriteColorElement.GetAttribute("Name");
-                    stblResources[i].Add(FNV64.GetHash("Gameplay/Objects/Appliances/FutureBar:" + colorName), favoriteColorElement.GetAttribute("Drink_Display_Name") ?? "Gameplay/Objects/Appliances/FutureBar:" + colorName);
-                    stblResources[i].Add(FNV64.GetHash("Gameplay/Objects/Plumbing/SonicShower:" + colorName), favoriteColorElement.GetAttribute("Display_Name") ?? "Gameplay/Objects/Plumbing/SonicShower:" + colorName);
-                    stblResources[i].Add(FNV64.GetHash("Ui/Caption/CAS/Favorites/Color:" + colorName), favoriteColorElement.GetAttribute("Display_Name") ?? "Ui/Caption/CAS/Favorites/Color:" + colorName);
+                    stblResources[i].Add(FNV64.GetHash("Gameplay/Objects/Appliances/FutureBar:" + colorName), (string?)favoriteColorElement.GetAttribute("Drink_Display_Name") ?? "Gameplay/Objects/Appliances/FutureBar:" + colorName);
+                    stblResources[i].Add(FNV64.GetHash("Gameplay/Objects/Plumbing/SonicShower:" + colorName), (string?)favoriteColorElement.GetAttribute("Display_Name") ?? "Gameplay/Objects/Plumbing/SonicShower:" + colorName);
+                    stblResources[i].Add(FNV64.GetHash("Ui/Caption/CAS/Favorites/Color:" + colorName), (string?)favoriteColorElement.GetAttribute("Display_Name") ?? "Ui/Caption/CAS/Favorites/Color:" + colorName);
                 }
                 newPackage.AddResource(new ResourceKey(0x220557DA, 0, stblKeyInstance), stblResources[i].Stream, true);
                 nameMapResource.Add(stblKeyInstance, stblName);

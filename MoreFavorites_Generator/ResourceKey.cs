@@ -2,53 +2,42 @@ using s3pi.Interfaces;
 
 namespace Destrospean.MoreFavorites.Generator
 {
-    public class ResourceKey : IResourceKey
+    public class ResourceKey(uint type, uint group, ulong instance) : IResourceKey
     {
         public ulong Instance
         {
             get;
             set;
-        }
+        } = instance;
 
         public uint ResourceGroup
         {
             get;
             set;
-        }
+        } = group;
 
         public uint ResourceType
         {
             get;
             set;
-        }
+        } = type;
 
-        public ResourceKey(uint type, uint group, ulong instance)
+        public int CompareTo(IResourceKey? other)
         {
-            Instance = instance;
-            ResourceGroup = group;
-            ResourceType = type;
-        }
-
-        public int CompareTo(IResourceKey other)
-        {
-            var result = ResourceType.CompareTo(other.ResourceType);
-            if (result != 0)
+            var result = ResourceType.CompareTo(other?.ResourceType);
+            if (result != 0 || (result = ResourceGroup.CompareTo(other?.ResourceGroup)) != 0)
             {
                 return result;
             }
-            if ((result = ResourceGroup.CompareTo(other.ResourceGroup)) != 0)
-            {
-                return result;
-            }
-            return Instance.CompareTo(other.Instance);
+            return Instance.CompareTo(other?.Instance);
         }
 
-        public bool Equals(IResourceKey a, IResourceKey b)
+        public bool Equals(IResourceKey? a, IResourceKey? b)
         {
-            return a.Equals(b);
+            return a?.Equals(b) ?? false;
         }
 
-        public bool Equals(IResourceKey other)
+        public bool Equals(IResourceKey? other)
         {
             return CompareTo(other) == 0;
         }
